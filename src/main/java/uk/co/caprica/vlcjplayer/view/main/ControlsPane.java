@@ -34,10 +34,7 @@ import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
 import uk.co.caprica.vlcj.binding.LibVlcConst;
-import uk.co.caprica.vlcjplayer.event.PausedEvent;
-import uk.co.caprica.vlcjplayer.event.PlayingEvent;
-import uk.co.caprica.vlcjplayer.event.ShowEffectsEvent;
-import uk.co.caprica.vlcjplayer.event.StoppedEvent;
+import uk.co.caprica.vlcjplayer.event.*;
 import uk.co.caprica.vlcjplayer.view.BasePanel;
 import uk.co.caprica.vlcjplayer.view.action.mediaplayer.MediaPlayerActions;
 
@@ -63,6 +60,10 @@ final class ControlsPane extends BasePanel {
 
     private final Icon volumeMutedIcon = newIcon("volume-muted");
 
+    private final Icon bulbEnabled = newIcon("bulb_enabled");
+
+    private final Icon bulbDisabled = newIcon("bulb_disabled");
+
     private final JButton playPauseButton;
 
     private final JButton previousButton;
@@ -76,6 +77,8 @@ final class ControlsPane extends BasePanel {
     private final JButton extendedButton;
 
     private final JButton snapshotButton;
+
+    private final JButton adaptiveLightButton;
 
     private final JButton muteButton;
 
@@ -96,13 +99,15 @@ final class ControlsPane extends BasePanel {
         extendedButton.setIcon(extendedIcon);
         snapshotButton = new StandardButton();
         snapshotButton.setAction(mediaPlayerActions.videoSnapshotAction());
+        adaptiveLightButton = new StandardButton();
+        adaptiveLightButton.setAction(mediaPlayerActions.adaptiveLightAction());
         muteButton = new StandardButton();
         muteButton.setIcon(volumeHighIcon);
         volumeSlider = new JSlider();
         volumeSlider.setMinimum(LibVlcConst.MIN_VOLUME);
         volumeSlider.setMaximum(LibVlcConst.MAX_VOLUME);
 
-        setLayout(new MigLayout("fill, insets 0 0 0 0", "[]12[]0[]0[]12[]0[]12[]push[]0[]", "[]"));
+        setLayout(new MigLayout("fill, insets 0 0 0 0", "[]12[]0[]0[]12[]0[]12[]12[]push[]0[]", "[]"));
 
         add(playPauseButton);
         add(previousButton, "sg 1");
@@ -113,6 +118,7 @@ final class ControlsPane extends BasePanel {
         add(extendedButton, "sg 1");
 
         add(snapshotButton, "sg 1");
+        add(adaptiveLightButton, "sg 1");
 
         add(muteButton, "sg 1");
         add(volumeSlider, "wmax 100");
@@ -161,6 +167,16 @@ final class ControlsPane extends BasePanel {
     @Subscribe
     public void onStopped(StoppedEvent event) {
         playPauseButton.setIcon(playIcon); // FIXME best way to do this? should be via the action really?
+    }
+
+    @Subscribe
+    public void onLightDiaabled(LightDisabledEvent event){
+        adaptiveLightButton.setIcon(bulbDisabled);
+    }
+
+    @Subscribe
+    public void onLightEnabled(LightEnabledEvent event){
+        adaptiveLightButton.setIcon(bulbEnabled);
     }
 
     private class BigButton extends JButton {

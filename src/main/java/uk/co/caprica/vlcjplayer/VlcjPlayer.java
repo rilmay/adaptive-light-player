@@ -112,7 +112,7 @@ public class VlcjPlayer {
     public VlcjPlayer() {
         EmbeddedMediaPlayerComponent mediaPlayerComponent = application().mediaPlayerComponent();
 
-        mainFrame = new MainFrame();
+        mainFrame = MainFrame.instance();
         mainFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

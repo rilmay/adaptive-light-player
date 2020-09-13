@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.swing.Action;
 
+import com.mollin.yapi.YeelightDevice;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
 import com.google.common.collect.ImmutableList;
@@ -53,6 +54,7 @@ public final class MediaPlayerActions {
     private final Action       playbackStopAction;
 
     private final Action       videoSnapshotAction;
+    private final Action       adaptiveLightAction;
 
     public MediaPlayerActions(MediaPlayer mediaPlayer) {
         playbackSpeedActions    = newPlaybackSpeedActions   (mediaPlayer);
@@ -68,6 +70,7 @@ public final class MediaPlayerActions {
         playbackPlayAction      = new PlayAction    (resource("menu.playback.item.play" ), mediaPlayer);
         playbackStopAction      = new StopAction    (resource("menu.playback.item.stop" ), mediaPlayer);
         videoSnapshotAction     = new SnapshotAction(resource("menu.video.item.snapshot"), mediaPlayer);
+        adaptiveLightAction     = new AdaptiveLightAction(resource("menu.video.item.adaptivelight"), mediaPlayer);
     }
 
     private List<Action> newPlaybackSpeedActions(MediaPlayer mediaPlayer) {
@@ -205,4 +208,6 @@ public final class MediaPlayerActions {
     public Action videoSnapshotAction() {
         return videoSnapshotAction;
     }
+
+    public Action adaptiveLightAction(){return adaptiveLightAction;}
 }

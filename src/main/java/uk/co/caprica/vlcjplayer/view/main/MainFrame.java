@@ -24,7 +24,6 @@ import static uk.co.caprica.vlcjplayer.Application.resources;
 import static uk.co.caprica.vlcjplayer.view.action.Resource.resource;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -150,7 +149,15 @@ public final class MainFrame extends BaseFrame {
 
     private final MouseMovementDetector mouseMovementDetector;
 
-    public MainFrame() {
+    private static final class MainFrameHolder {
+        private static final MainFrame INSTANCE = new MainFrame();
+    }
+
+    public static MainFrame instance() {
+        return MainFrame.MainFrameHolder.INSTANCE;
+    }
+
+    private MainFrame() {
         super("vlcj player");
 
         this.mediaPlayerComponent = application().mediaPlayerComponent();
@@ -492,23 +499,23 @@ public final class MainFrame extends BaseFrame {
 
             @Override
             public void mediaPlayerReady(MediaPlayer mediaPlayer) {
-                Logo logo = Logo.logo()
-                    .file("src/main/resources/vlcj-logo.png")
-                    .position(libvlc_logo_position_e.top_left)
-                    .opacity(0.5f)
-                    .enable();
-
-                mediaPlayer.setLogo(logo);
-
-                Marquee marquee = Marquee.marquee()
-                    .text(String.format("vlcj-player"))
-                    .colour(Color.white.getRGB())
-                    .size(20)
-                    .position(libvlc_marquee_position_e.bottom_right)
-                    .location(10,5)
-                    .enable();
-
-                mediaPlayer.setMarquee(marquee);
+//                Logo logo = Logo.logo()
+//                    .file("src/main/resources/vlcj-logo.png")
+//                    .position(libvlc_logo_position_e.top_left)
+//                    .opacity(0.5f)
+//                    .enable();
+//
+//                mediaPlayer.setLogo(logo);
+//
+//                Marquee marquee = Marquee.marquee()
+//                    .text(String.format("vlcj-player"))
+//                    .colour(Color.white.getRGB())
+//                    .size(20)
+//                    .position(libvlc_marquee_position_e.bottom_right)
+//                    .location(10,5)
+//                    .enable();
+//
+//                mediaPlayer.setMarquee(marquee);
             }
         });
 
