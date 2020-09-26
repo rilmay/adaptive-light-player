@@ -4,7 +4,9 @@ import com.mollin.yapi.YeelightDevice;
 import com.mollin.yapi.enumeration.YeelightEffect;
 import com.mollin.yapi.exception.YeelightResultErrorException;
 import com.mollin.yapi.exception.YeelightSocketException;
+import uk.co.caprica.vlcjplayer.view.main.MainFrame;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +16,6 @@ public class YeelightManager {
 
     public YeelightManager(LightConfig config) {
         this.config = config;
-        initDevices();
     }
 
     public void setPower(Boolean power) {
@@ -22,14 +23,18 @@ public class YeelightManager {
     }
 
 
-    private void initDevices() {
+    public boolean initDevices() {
         this.yeelightDevices = new HashMap<>();
+        int badDevicesCount = 0;
         for (LightDevice device : config.getDevices()) {
             YeelightDevice yeelightDevice = initDevice(device, YeelightEffect.SMOOTH, Defaults.DURATION);
             if (yeelightDevice != null) {
                 yeelightDevices.put(device, yeelightDevice);
+            }else{
+                badDevicesCount++;
             }
         }
+        return badDevicesCount < config.getDevices().size();
     }
 
     private YeelightDevice initDevice(LightDevice device, YeelightEffect effect, Integer duration) {
@@ -37,7 +42,7 @@ public class YeelightManager {
         try {
             yeelightDevice = new YeelightDevice(device.getIp(), device.getPort(), effect, duration);
         } catch (YeelightSocketException e) {
-            System.out.println("Something wrong with your Yeelight device with ip " + device.getIp() + ", reason " + e.getMessage());
+            JOptionPane.showMessageDialog(MainFrame.instance(),"Something wrong with your Yeelight device with ip " + device.getIp() + ", reason " + e.getMessage(), "Yeelight device error", JOptionPane.ERROR_MESSAGE);
         }
         return yeelightDevice;
     }
@@ -60,7 +65,6 @@ public class YeelightManager {
                     yeelightDevice.setRGB(rgb[0], rgb[1], rgb[2]);
             }
         } catch (YeelightSocketException | YeelightResultErrorException e) {
-            System.out.println("Something wrong with your yeelight device, reason: " + e.getMessage());
         }
     }
 
@@ -72,7 +76,6 @@ public class YeelightManager {
         try {
             device.setPower(power);
         } catch (YeelightSocketException | YeelightResultErrorException e) {
-            System.out.println("Something wrong with your yeelight device, reason: " + e.getMessage());
         }
     }
 }

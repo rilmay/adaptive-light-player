@@ -55,8 +55,6 @@ public class ImageHandler {
 
             screenData.put(area, average);
         });
-
-        System.out.println("area " + ScreenArea.WHOLE_SCREEN + " value " + getValue(ScreenArea.WHOLE_SCREEN, Feature.BRIGHTNESS, false));
     }
 
 

@@ -28,7 +28,6 @@ public class AdaptiveLightAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println("hello");
         if (isEnabled) {
             if (yeelightManager != null) {
                 yeelightManager.setPower(false);
@@ -45,6 +44,10 @@ public class AdaptiveLightAction extends MediaPlayerAction {
             if (config != null) {
                 if (yeelightManager == null) {
                     yeelightManager = new YeelightManager(config);
+                    boolean successfulInit = yeelightManager.initDevices();
+                    if(!successfulInit){
+                        return;
+                    }
                 }
                 yeelightManager.setPower(true);
 
@@ -88,7 +91,6 @@ public class AdaptiveLightAction extends MediaPlayerAction {
     private void setFeature(Feature feature, Integer threshold, LightDevice lightDevice, ImageHandler handler) {
         Integer currentValue = lightDevice.getCurrentValueByFeature(feature);
         Integer newValue = handler.getValue(lightDevice.getScreenArea(), feature, true);
-        System.out.println("set feature " + feature + " value" + newValue + " previous " + currentValue);
         if (Math.abs(currentValue - newValue) > threshold) {
             lightDevice.setCurrentValueByFeature(feature, newValue);
             yeelightManager.setFeature(lightDevice, feature, newValue);

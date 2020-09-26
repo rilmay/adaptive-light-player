@@ -33,13 +33,12 @@ public class JsonParser {
         LightConfig config = null;
         try (FileReader reader = new FileReader((filename == null) ? Defaults.CONFIG_FILENAME : filename)) {
             config = JsonParser.parse(reader);
-            System.out.println("config " + config);
         } catch (FileNotFoundException e) {
             if (filename == null) {
                 Optional.ofNullable(findFile()).ifPresent(JsonParser::getLightConfig);
             }
         } catch (IOException e) {
-            System.out.println("Cant read file, give up " + e.getMessage());
+            JOptionPane.showMessageDialog(MainFrame.instance(),"Cant read file, give up, message: " + e.getMessage(), "Config file error", JOptionPane.ERROR_MESSAGE);
         }
         return config;
     }
