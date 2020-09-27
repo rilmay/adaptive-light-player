@@ -46,6 +46,7 @@ public class AdaptiveLightAction extends MediaPlayerAction {
                     yeelightManager = new YeelightManager(config);
                     boolean successfulInit = yeelightManager.initDevices();
                     if(!successfulInit){
+                        yeelightManager = null;
                         return;
                     }
                 }

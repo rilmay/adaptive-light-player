@@ -9,9 +9,9 @@ import java.util.stream.IntStream;
 
 public class ImageHandler {
     private static List<ScreenArea> mainAreas = Arrays.asList(ScreenArea.TOP_LEFT, ScreenArea.TOP_RIGHT, ScreenArea.BOTTOM_LEFT, ScreenArea.BOTTOM_RIGHT);
-    private static int scaledWith = 20;
+    private static int scaledWidth = 20;
     private static int scaledHeight = 20;
-    private static int scaledWithCenter = (scaledWith) / 2;
+    private static int scaledWidthCenter = (scaledWidth) / 2;
     private static int scaledHeightCenter = (scaledHeight) / 2;
     private Map<ScreenArea, Integer> screenData;
     private LightConfig config;
@@ -22,21 +22,26 @@ public class ImageHandler {
             return dimensions;
         }
         String name = area.name().toLowerCase();
-        dimensions[0] = (name.contains("left")) ? 0 : scaledWithCenter;
+        dimensions[0] = (name.contains("left")) ? 0 : scaledWidthCenter;
         dimensions[1] = (name.contains("top")) ? 0 : scaledHeightCenter;
-        dimensions[2] = scaledWithCenter;
+        dimensions[2] = scaledWidthCenter;
         dimensions[3] = scaledHeightCenter;
         return dimensions;
     }
 
-    public ImageHandler(BufferedImage image, LightConfig config) {
-        this.config = config;
-        Image tmp = image.getScaledInstance(scaledWith, scaledHeight, Image.SCALE_FAST);
-        BufferedImage scaledImage = new BufferedImage(scaledWith, scaledHeight, BufferedImage.TYPE_INT_ARGB);
+    private BufferedImage getScaledImage(BufferedImage image, int width, int height) {
+        Image tmp = image.getScaledInstance(width, height, Image.SCALE_FAST);
+        BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g2d = scaledImage.createGraphics();
         g2d.drawImage(tmp, 0, 0, null);
         g2d.dispose();
+        return scaledImage;
+    }
+
+    public ImageHandler(BufferedImage image, LightConfig config) {
+        this.config = config;
+        BufferedImage scaledImage = getScaledImage(image, scaledWidth, scaledHeight);
 
         screenData = new HashMap<>();
         mainAreas.forEach(area -> {
@@ -129,10 +134,10 @@ public class ImageHandler {
         return rgb;
     }
 
-    public static int getRgbInt(int[] pixel){
+    public static int getRgbInt(int[] pixel) {
         int value = ((255 & 0xFF) << 24) |
                 ((pixel[0] & 0xFF) << 16) |
-                ((pixel[1] & 0xFF) << 8)  |
+                ((pixel[1] & 0xFF) << 8) |
                 ((pixel[2] & 0xFF) << 0);
         return value;
     }
