@@ -11,8 +11,8 @@ public class ImageHandler {
     private static List<ScreenArea> mainAreas = Arrays.asList(ScreenArea.TOP_LEFT, ScreenArea.TOP_RIGHT, ScreenArea.BOTTOM_LEFT, ScreenArea.BOTTOM_RIGHT);
     private static int scaledWidth = 20;
     private static int scaledHeight = 20;
-    private static int scaledWidthCenter = (scaledWidth) / 2;
-    private static int scaledHeightCenter = (scaledHeight) / 2;
+    private static int scaledWidthCenter = scaledWidth / 2;
+    private static int scaledHeightCenter = scaledHeight / 2;
     private Map<ScreenArea, Integer> screenData;
     private LightConfig config;
 
@@ -39,8 +39,7 @@ public class ImageHandler {
         return scaledImage;
     }
 
-    public ImageHandler(BufferedImage image, LightConfig config) {
-        this.config = config;
+    private void proceedImage(BufferedImage image) {
         BufferedImage scaledImage = getScaledImage(image, scaledWidth, scaledHeight);
 
         screenData = new HashMap<>();
@@ -62,6 +61,11 @@ public class ImageHandler {
         });
     }
 
+    public ImageHandler(BufferedImage image, LightConfig config) {
+        this.config = config;
+        proceedImage(image);
+    }
+
 
     public int getValue(ScreenArea area, Feature feature, Boolean considerRate) {
         Integer intValue = screenData.get(area);
@@ -69,20 +73,14 @@ public class ImageHandler {
             Color color = new Color(intValue);
             if (feature == Feature.COLOR) {
                 return color.getRGB();
-            } else if (feature == Feature.BRIGHTNESS) {
-                int value = (int) ((color.getRed() * 0.2126f + color.getGreen() * 0.7152f + color.getBlue() * 0.0722f) / 255 * 100);
-                if (considerRate) {
-                    value = 10 + (int) (value * config.getBrightnessRate());
-                }
-                return (value > 100) ? 100 : value;
-            } else if (feature == Feature.TEMPERATURE) {
-                int value = (int) ((float) (color.getRed() - color.getBlue()) / 255 * 100);
+            } else if (feature == Feature.BRIGHTNESS || feature == Feature.TEMPERATURE) {
+                int value = (feature == Feature.BRIGHTNESS) ? getBrightness(color) : getTemperature(color);
+                double rate = (feature == Feature.BRIGHTNESS) ? config.getBrightnessRate() : config.getTemperatureRate();
                 value = (value < 0) ? 0 : value;
                 if (considerRate) {
-                    value = 10 + (int) (value * config.getTemperatureRate());
+                    value = 10 + (int) (value * rate);
                 }
-                value = (value > 100) ? 100 : value;
-                return value;
+                return (value > 100) ? 100 : value;
             } else {
                 return 0;
             }
@@ -90,6 +88,14 @@ public class ImageHandler {
             calculateArea(area);
             return getValue(area, feature, considerRate);
         }
+    }
+
+    private int getBrightness(Color color) {
+        return (int) ((color.getRed() * 0.2126f + color.getGreen() * 0.7152f + color.getBlue() * 0.0722f) / 255 * 100);
+    }
+
+    private int getTemperature(Color color) {
+        return (int) ((float) (color.getRed() - color.getBlue()) / 255 * 100);
     }
 
     private void calculateArea(ScreenArea area) {
