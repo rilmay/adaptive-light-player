@@ -17,7 +17,7 @@ Screenshot
 Before you start
 ----------
 You should install VLC player (64 bit) and Java from version 1.8 or higher.
-You can compile program from the source files or just download executable jar.
+You can compile program from the source files or just download executable [jar](https://github.com/rilmay/adaptive-light-player/releases/download/1.0/vlcj-player.jar).
 Then you must create a file called "config.json" and place him in the same folder as a compiled jar.
 In this file you should specify ip addresses of lamps.
 You can also specify certain additional functions, which are described in "configuration guide".
