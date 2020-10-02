@@ -18,8 +18,9 @@ import static uk.co.caprica.vlcjplayer.Application.application;
 public class AdaptiveLightAction extends MediaPlayerAction {
     private YeelightManager yeelightManager;
     private LightConfig config;
-    private Boolean isEnabled;
+    private boolean isEnabled;
     private ScheduledExecutorService scheduler;
+    private boolean cameraNotWorking = false;
 
     AdaptiveLightAction(Resource resource, MediaPlayer mediaPlayer) {
         super(resource, mediaPlayer);
@@ -45,7 +46,7 @@ public class AdaptiveLightAction extends MediaPlayerAction {
                 if (yeelightManager == null) {
                     yeelightManager = new YeelightManager(config);
                     boolean successfulInit = yeelightManager.initDevices();
-                    if(!successfulInit){
+                    if (!successfulInit) {
                         yeelightManager = null;
                         return;
                     }
@@ -65,11 +66,16 @@ public class AdaptiveLightAction extends MediaPlayerAction {
 
 
     private void checkRoom() {
+        if (cameraNotWorking) {
+            return;
+        }
         BufferedImage cameraImage = CameraManager.getImage();
         if (cameraImage != null) {
             ImageHandler handler = new ImageHandler(cameraImage, null);
-            double brightnessRate = 1 +  (double)(handler.getValue(ScreenArea.WHOLE_SCREEN, Feature.BRIGHTNESS, false)) / 100;
+            double brightnessRate = 1 + (double) (handler.getValue(ScreenArea.WHOLE_SCREEN, Feature.BRIGHTNESS, false)) / 100;
             config.setBrightnessRate(brightnessRate);
+        } else {
+            cameraNotWorking = true;
         }
     }
 
@@ -81,7 +87,7 @@ public class AdaptiveLightAction extends MediaPlayerAction {
         ImageHandler handler = new ImageHandler(image, config);
         config.getDevices().forEach(lightDevice -> {
             if (lightDevice.getFeatures().contains(Feature.COLOR)) {
-                setFeature(Feature.COLOR, Defaults.CHANGE_VALUE_TRESHOLD_COLOR, lightDevice, handler);
+                setFeature(Feature.COLOR, 0, lightDevice, handler);
             } else {
                 lightDevice.getFeatures()
                         .forEach(feature -> setFeature(feature, Defaults.CHANGE_VALUE_TRESHOLD, lightDevice, handler));

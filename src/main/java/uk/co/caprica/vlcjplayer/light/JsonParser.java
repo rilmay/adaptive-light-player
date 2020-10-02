@@ -38,12 +38,12 @@ public class JsonParser {
                 Optional.ofNullable(findFile()).ifPresent(JsonParser::getLightConfig);
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(MainFrame.instance(),"Cant read file, give up, message: " + e.getMessage(), "Config file error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(MainFrame.instance(), "Cant read file, give up, message: " + e.getMessage(), "Config file error", JOptionPane.ERROR_MESSAGE);
         }
         return config;
     }
 
-    private static String findFile(){
+    private static String findFile() {
         String path = null;
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new java.io.File("."));
@@ -114,20 +114,20 @@ public class JsonParser {
         config.setDevices(deviceSet);
 
         String roomCheck = getValue(ROOM_CHECK_TAG, jsonConfig, null);
-        if (roomCheck != null) {
+        if (roomCheck != null && !roomCheck.equals(Defaults.ROOM_CHECK_FALSE)) {
             config.setCheck(true);
             Integer checkInterval = getValue(CHECK_INTERVAL_TAG, jsonConfig, Defaults.CHECK_INTERVAL_MIN);
-            config.setCheckInterval(checkInterval);
+            config.setCheckInterval(Defaults.getCheckInterval(checkInterval));
         }
 
         double brightnessRate = getValue(BRIGHTNESS_RATE_TAG, jsonConfig, Defaults.BRIGHTNESS_RATE);
-        config.setBrightnessRate(brightnessRate);
+        config.setBrightnessRate(Defaults.getBrightnessRate(brightnessRate));
 
         double temperatureRate = getValue(TEMPERATURE_RATE_TAG, jsonConfig, Defaults.TEMPERATURE_RATE);
-        config.setTemperatureRate(temperatureRate);
+        config.setTemperatureRate(Defaults.getTemperatureRate(temperatureRate));
 
         int refreshInterval = getValue(REFRESH_INTERVAL_TAG, jsonConfig, Defaults.REFRESH_INTERVAL_MSEC);
-        config.setRefreshInterval(refreshInterval);
+        config.setRefreshInterval(Defaults.getRefreshInterval(refreshInterval));
 
         return config;
     }
